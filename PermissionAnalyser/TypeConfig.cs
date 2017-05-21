@@ -1,24 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using PermissionAnalyser.Permissions;
 
 namespace PermissionAnalyser
 {
-    public class PermissionObj
-    {
-        public string Type { get; set; }
-        public string Method { get; set; }
-        public string Permission { get; set; }
-    }
-    public class MethodAndPermission
-    {
-        public string Service { get; set; }
-        public List<PermissionObj> Permissions { get; set; }
-    }
-    /// <summary>
-    /// Definition of types to search for.
-    /// Could do this by linking to all of the sdks, but this way doesn't require having them all there.
-    /// </summary>
     public class TypeConfig
     {
-        public List<PermissionObj> MethodAndPermissions { get; set; }
+        public static List<Permission> GetPermissions()
+        {
+            var groups = new List<List<Permission>>
+            {
+                S3Permissions.All()
+            };
+            return groups.Aggregate(new List<Permission>(), (agg, elem) => agg.Concat(elem).ToList());
+        }
     }
 }

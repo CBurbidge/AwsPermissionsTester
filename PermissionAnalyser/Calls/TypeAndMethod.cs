@@ -1,4 +1,4 @@
-namespace PermissionAnalyser
+namespace PermissionAnalyser.Calls
 {
     public class TypeAndMethod
     {

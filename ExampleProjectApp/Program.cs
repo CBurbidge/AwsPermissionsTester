@@ -14,14 +14,12 @@ namespace ExampleProjectApp
             GetValue(s3Client, dynamoClient);
             var thing = 0;
             Console.WriteLine("Done.");
-            
-            
         }
 
         private static void GetValue(IAmazonS3 s3Client, IAmazonDynamoDB dynamoClient)
         {
-            var s3Result = s3Client.GetObject("some-bucket", "some-key");
-            var dynamoResult = dynamoClient.GetItem(new GetItemRequest());
+            Action thing = () => s3Client.GetObject("some-bucket", "some-key");
+            Action thing2 = () => dynamoClient.GetItem(new GetItemRequest());
         }
     }
 }

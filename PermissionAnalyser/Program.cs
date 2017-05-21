@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using PermissionAnalyser.Calls;
 
 namespace PermissionAnalyser
 {
@@ -18,6 +19,12 @@ namespace PermissionAnalyser
 
         private static void Run(string dirPath)
         {
+            var permissions = TypeConfig.GetPermissions();
+            foreach (var permission in permissions)
+            {
+                Console.WriteLine(permission.ToString());
+            }
+
             var pathAndMethodCalls = new List<PathAndMethodCalls>();
 
             foreach (var path in GetFiles(dirPath))
@@ -48,9 +55,9 @@ namespace PermissionAnalyser
             {
                 var typeAndMethodResult = parser.Parse(fullMethodName);
                 if (typeAndMethodResult.Outcome ==
-                    TypeAndMethodParser.TypeAndMethodParseResult.ParseResult.Success)
+                    TypeAndMethodParser.Result.ParseOutcome.Success)
                 {
-                    typeAndMethods.Add(typeAndMethodResult.Result);
+                    typeAndMethods.Add(typeAndMethodResult.Value);
                 }
                 else
                 {

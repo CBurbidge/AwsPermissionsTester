@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PermissionAnalyser
+namespace PermissionAnalyser.Calls
 {
     public class PathAndMethodCalls
     {
