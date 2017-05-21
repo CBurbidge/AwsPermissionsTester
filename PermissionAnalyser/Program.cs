@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Collections.Generic;
 
 namespace PermissionAnalyser
 {
@@ -31,6 +28,15 @@ namespace PermissionAnalyser
                 var typeAndMethods = GetTypeAndMethods(fullMethodNames);
 
                 pathAndMethodCalls.Add(new PathAndMethodCalls(path, typeAndMethods));
+            }
+
+            foreach (var pathAndMethodCall in pathAndMethodCalls)
+            {
+                Console.WriteLine($"Path is {pathAndMethodCall.Path}");
+                foreach (var typeAndMethod in pathAndMethodCall.Calls)
+                {
+                    Console.WriteLine($"{typeAndMethod.Type} - {typeAndMethod.Method}");
+                }
             }
         }
 
@@ -100,17 +106,5 @@ namespace PermissionAnalyser
             }
             return fullMethodNames;
         }
-    }
-
-    public class PathAndMethodCalls
-    {
-        public PathAndMethodCalls(string path, List<TypeAndMethod> calls)
-        {
-            Path = path;
-            Calls = calls;
-        }
-
-        public string Path { get; }
-        public List<TypeAndMethod> Calls { get; }
     }
 }

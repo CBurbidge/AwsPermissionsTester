@@ -14,6 +14,8 @@ namespace ExampleProjectApp
             GetValue(s3Client, dynamoClient);
             var thing = 0;
             Console.WriteLine("Done.");
+            
+            
         }
 
         private static void GetValue(IAmazonS3 s3Client, IAmazonDynamoDB dynamoClient)
