@@ -92,7 +92,7 @@ namespace PermissionAnalyser
 
         private static void CheckTypeRec(TypeDefinition type, HashSet<string> fullMethodNames)
         {
-            Console.WriteLine($"  Type - {type.Name}");
+            //Console.WriteLine($"  Type - {type.Name}");
             GetTypeMethods(type, fullMethodNames);
 
             foreach (var typeDefinition in type.NestedTypes)
@@ -105,12 +105,12 @@ namespace PermissionAnalyser
         {
             foreach (var methodDefinition in type.Methods)
             {
-                Console.WriteLine($"  Method - {methodDefinition.Name}");
+                //Console.WriteLine($"  Method - {methodDefinition.Name}");
                 if (methodDefinition.Body != null)
                 {
                     foreach (var instruction in methodDefinition.Body.Instructions)
                     {
-                        Console.WriteLine(instruction.ToString());
+                        //Console.WriteLine(instruction.ToString());
                         if (instruction.OpCode == OpCodes.Callvirt)
                         {
                             var methodCall = instruction.Operand as MethodReference;
