@@ -14,36 +14,35 @@ namespace PermissionAnalyser
         {
             var dirPath = Path.GetFullPath("../../../ExampleProjectApp/bin/Debug");
             Run(dirPath);
+            Console.WriteLine("Done.");
             Console.ReadKey();
         }
 
         private static void Run(string dirPath)
         {
             var permissions = TypeConfig.GetPermissions();
-            foreach (var permission in permissions)
-            {
-                Console.WriteLine(permission.ToString());
-            }
-
-            var pathAndMethodCalls = new List<PathAndMethodCalls>();
+            
+            var pathAndActions = new List<PathAndActions>();
 
             foreach (var path in GetFiles(dirPath))
             {
+                var actions = new List<string>();
                 Console.WriteLine(path);
                 var fullMethodNames = GetUniqueFullMethodNamesFromPath(path);
 
                 var typeAndMethods = GetTypeAndMethods(fullMethodNames);
-
-                pathAndMethodCalls.Add(new PathAndMethodCalls(path, typeAndMethods));
-            }
-
-            foreach (var pathAndMethodCall in pathAndMethodCalls)
-            {
-                Console.WriteLine($"Path is {pathAndMethodCall.Path}");
-                foreach (var typeAndMethod in pathAndMethodCall.Calls)
+                foreach (var typeAndMethod in typeAndMethods)
                 {
-                    Console.WriteLine($"{typeAndMethod.Type} - {typeAndMethod.Method}");
+                    foreach (var permission in permissions)
+                    {
+                        if (permission.IsTypeAndMethod(typeAndMethod))
+                        {
+                            Console.WriteLine($"Adding action - {permission.Action}");
+                            actions.Add(permission.Action);
+                        }
+                    }
                 }
+                pathAndActions.Add(new PathAndActions(path, actions));
             }
         }
 
@@ -82,36 +81,47 @@ namespace PermissionAnalyser
 
         private static HashSet<string> GetUniqueFullMethodNamesFromPath(string path)
         {
-            var callCodes = new[]
-            {
-                //OpCodes.Call
-                //,
-                OpCodes.Callvirt
-            };
-
             var fullMethodNames = new HashSet<string>();
             var module = ModuleDefinition.ReadModule(path);
-            foreach (TypeDefinition type in module.Types)
+            foreach (var type in module.Types)
             {
-                foreach (var methodDefinition in type.Methods)
+                CheckTypeRec(type, fullMethodNames);
+            }
+            return fullMethodNames;
+        }
+
+        private static void CheckTypeRec(TypeDefinition type, HashSet<string> fullMethodNames)
+        {
+            Console.WriteLine($"  Type - {type.Name}");
+            GetTypeMethods(type, fullMethodNames);
+
+            foreach (var typeDefinition in type.NestedTypes)
+            {
+                CheckTypeRec(typeDefinition, fullMethodNames);
+            }
+        }
+
+        private static void GetTypeMethods(TypeDefinition type, HashSet<string> fullMethodNames)
+        {
+            foreach (var methodDefinition in type.Methods)
+            {
+                Console.WriteLine($"  Method - {methodDefinition.Name}");
+                if (methodDefinition.Body != null)
                 {
-                    if (methodDefinition.Body != null)
+                    foreach (var instruction in methodDefinition.Body.Instructions)
                     {
-                        foreach (var instruction in methodDefinition.Body.Instructions)
+                        Console.WriteLine(instruction.ToString());
+                        if (instruction.OpCode == OpCodes.Callvirt)
                         {
-                            if (callCodes.Contains(instruction.OpCode))
+                            var methodCall = instruction.Operand as MethodReference;
+                            if (methodCall != null)
                             {
-                                var methodCall = instruction.Operand as MethodReference;
-                                if (methodCall != null)
-                                {
-                                    fullMethodNames.Add(methodCall.FullName);
-                                }
+                                fullMethodNames.Add(methodCall.FullName);
                             }
                         }
                     }
                 }
             }
-            return fullMethodNames;
         }
     }
 }

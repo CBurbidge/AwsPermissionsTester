@@ -19,7 +19,9 @@ namespace ExampleProjectApp
         private static void GetValue(IAmazonS3 s3Client, IAmazonDynamoDB dynamoClient)
         {
             Action thing = () => s3Client.GetObject("some-bucket", "some-key");
+            thing();
             Action thing2 = () => dynamoClient.GetItem(new GetItemRequest());
+            Console.WriteLine(thing2);
         }
     }
 }

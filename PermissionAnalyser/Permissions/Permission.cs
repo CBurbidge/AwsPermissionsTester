@@ -1,4 +1,6 @@
-﻿namespace PermissionAnalyser.Permissions
+﻿using PermissionAnalyser.Calls;
+
+namespace PermissionAnalyser.Permissions
 {
     public class Permission
     {
@@ -16,6 +18,11 @@
         public override string ToString()
         {
             return $"{Type} - {Method} - {Action}";
+        }
+
+        public bool IsTypeAndMethod(TypeAndMethod typeAndMethod)
+        {
+            return typeAndMethod.Method == Method && typeAndMethod.Type == Type;
         }
     }
 }

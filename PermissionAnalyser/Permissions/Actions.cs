@@ -8,6 +8,8 @@
             public static readonly string DeleteBucket = "s3:DeleteBucket";
             public static readonly string PutObject = "s3:PutObject";
             public static readonly string PutAnalyticsConfiguration = "s3:PutAnalyticsConfiguration";
+
+            public static readonly string GetObject = "s3:GetObject";
         }
     }
 }
